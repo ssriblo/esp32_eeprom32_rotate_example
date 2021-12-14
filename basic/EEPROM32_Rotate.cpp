@@ -1,4 +1,10 @@
 /*
+  Modified to work at target project.
+  Used EEPROM32 (.cpp/.h) instead of EEPROM (.cpp/.h)
+  Add new method write_and_commit()
+*/
+
+/*
 
 EEPROM32 Rotate
 
@@ -285,9 +291,7 @@ bool EEPROM32_Rotate::commit() {
     _name = _partitions[_partition_index].name;
     _partition_value++;
 
-
-EEPROMClass::begin(4096);
-
+    EEPROMClass::begin(4096);
 
     DEBUG_EEPROM32_ROTATE("Writing to partition #%u (%s)\n", _partition_index, _name);
     DEBUG_EEPROM32_ROTATE("Writing magic value #%u\n", _partition_value);

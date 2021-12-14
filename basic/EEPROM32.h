@@ -1,4 +1,8 @@
 /*
+  Renamed to EEPROM32.h
+*/
+
+/*
   EEPROM.h -ported by Paolo Becchi to Esp32 from esp8266 EEPROM
            -Modified by Elochukwu Ifediora <ifedioraelochukwuc@gmail.com>
 

@@ -1,4 +1,10 @@
 /*
+  Modified to work at target project.
+  Used EEPROM32 (.cpp/.h) instead of EEPROM (.cpp/.h)
+  Add new method write_and_commit()
+*/
+
+/*
 
 EEPROM32 Rotate
 

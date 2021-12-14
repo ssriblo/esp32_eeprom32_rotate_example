@@ -60,6 +60,8 @@ void setup() {
 
     for(int i=0; i<CYCLE; i++){
         Serial.println("********************");
+        //Serial.printf_P(PSTR("<<<<<<< free heap memory BEFORE: %d >>>>>>>>\n"), ESP.getFreeHeap());
+        
         Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
         Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
         Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
@@ -77,6 +79,8 @@ void setup() {
         Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
         Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
         Serial.printf("Data      : 0x%02X\n", data = EEPROMr.read(0));
+
+        //Serial.printf_P(PSTR("<<<<<<< free heap memory AFTER: %d >>>>>>>>\n"), ESP.getFreeHeap());
     }
 
     Serial.flush();

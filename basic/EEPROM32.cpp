@@ -1,4 +1,8 @@
 /*
+  Renamed to EEPROM32.cpp
+*/
+
+/*
   EEPROM.h -ported by Paolo Becchi to Esp32 from esp8266 EEPROM
            -Modified by Elochukwu Ifediora <ifedioraelochukwuc@gmail.com>
 
@@ -75,7 +79,7 @@ bool EEPROMClass::begin(size_t size) {
   }
   //  _mypart = esp_partition_find_first(ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_ANY, EEPROM_FLASH_PARTITION_NAME);
   _mypart = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_ANY, _name);
-  log_i("_mypart label=%s address=%x \n", _mypart->label, _mypart->address);
+  //log_i("_mypart label=%s address=%x \n", _mypart->label, _mypart->address);
   if (_mypart == NULL) {
     return false;
   }
@@ -142,8 +146,6 @@ bool EEPROMClass::commit() {
     return true;
   if (!_data)
     return false;
-
-log_i( ">>>>>>>>>>>>>>>>>>>> commit, %x  %s", _mypart->address, _mypart->label);
 
   if (esp_partition_erase_range(_mypart, 0, SPI_FLASH_SEC_SIZE) != ESP_OK)
   {
