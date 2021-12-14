@@ -331,7 +331,7 @@ bool EEPROM32_Rotate::write_and_commit(uint8_t* data_array, uint32_t array_size,
 
     // Check if we are really going to write
     if (!_user_defined_size) return false;
-    if (!_dirty) return true;
+//    if (!_dirty) return true;
     if (!_data) return false;
     if (array_size > _offset) return false;
 
