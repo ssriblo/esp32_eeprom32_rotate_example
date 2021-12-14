@@ -59,6 +59,7 @@ class EEPROM32_Rotate: public EEPROMClass {
 
         void begin(size_t size);
         bool commit();
+        bool write_and_commit(uint8_t* data_array, uint32_t array_size, size_t part_size);
 
         const char * name(uint8_t index);
         const char * current();

@@ -317,6 +317,67 @@ EEPROMClass::begin(4096);
 
 }
 
+/**
+ * @brief NEW Method - Writes data to memory and then from memory to the next partition in the partition pool
+ * and flags it as current partition.
+ * @param {uint8_t*} data_array     data to write
+ * @param {uint32_t} array_size     data size (bytes)
+ * @param {size_t} part_size        partition size
+ * @returns {bool}      True if successfully written
+ */
+bool EEPROM32_Rotate::write_and_commit(uint8_t* data_array, uint32_t array_size, size_t part_size) {
+
+    if (_partitions.size() == 0) return false;
+
+    // Check if we are really going to write
+    if (!_user_defined_size) return false;
+    if (!_dirty) return true;
+    if (!_data) return false;
+    if (array_size > _offset) return false;
+
+    // Backup current values
+    uint8_t index_backup = _partition_index;
+    uint8_t value_backup = _partition_value;
+
+    // Update partition for next write
+    _partition_index = (_partition_index + 1) % _partitions.size();
+    _name = _partitions[_partition_index].name;
+    _partition_value++;
+
+
+    EEPROMClass::begin(part_size);
+    for(int i=0; i< array_size; i++){
+        write(i, data_array[i]);
+    }
+
+    DEBUG_EEPROM32_ROTATE("Writing to partition #%u (%s)\n", _partition_index, _name);
+    DEBUG_EEPROM32_ROTATE("Writing magic value #%u\n", _partition_value);
+
+    // Update the counter & crc bytes
+    uint16_t crc = _calculate_crc();
+    write(_offset + EEPROM32_ROTATE_CRC_OFFSET, (crc >> 8) & 0xFF);
+    write(_offset + EEPROM32_ROTATE_CRC_OFFSET + 1, crc & 0xFF);
+    write(_offset + EEPROM32_ROTATE_COUNTER_OFFSET, _partition_value);
+
+    // Perform the commit
+    bool ret = EEPROMClass::commit();
+
+    // If commit failed restore values
+    if (!ret) {
+
+        DEBUG_EEPROM32_ROTATE("Commit to partition #%u failed, restoring\n", _partition_index);
+
+        // Restore values
+        _partition_index = index_backup;
+        _partition_value = value_backup;
+        _name = _partitions[_partition_index].name;
+
+    }
+
+    return ret;
+
+}
+
 // -----------------------------------------------------------------------------
 // PRIVATE METHODS
 // -----------------------------------------------------------------------------
