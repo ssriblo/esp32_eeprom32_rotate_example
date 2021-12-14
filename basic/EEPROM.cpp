@@ -24,6 +24,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "Arduino.h"
 #include "EEPROM.h"
 
 #include <esp_log.h>
@@ -141,6 +142,8 @@ bool EEPROMClass::commit() {
   if (!_data)
     return false;
 
+log_i( ">>>>>>>>>>>>>>>>>>>> commit, %u  %s", _mypart->address, _mypart->label);
+//log_i( ">>>>>>>>>>>>>>>>>>>> commit, ");
 
   if (esp_partition_erase_range(_mypart, 0, SPI_FLASH_SEC_SIZE) != ESP_OK)
   {
@@ -279,14 +282,13 @@ size_t EEPROMClass::readString (int address, char* value, size_t maxLen)
     return 0;
 
   memcpy((uint8_t*) value, _data + address, len);
-  value[len] = 0;
   return len;
 }
 
 String EEPROMClass::readString (int address)
 {
   if (address < 0 || address > _size)
-    return String();
+    return String(0);
 
   uint16_t len;
   for (len = 0; len <= _size; len++)
@@ -294,11 +296,11 @@ String EEPROMClass::readString (int address)
       break;
 
   if (address + len > _size)
-    return String();
+    return String(0);
 
-  char value[len];
+  char value[len + 1];
   memcpy((uint8_t*) value, _data + address, len);
-  value[len] = 0;
+  value[len + 1] = 0;
   return String(value);
 }
 

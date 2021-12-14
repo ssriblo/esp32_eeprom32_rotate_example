@@ -11,22 +11,21 @@ void setup() {
     // Init DEBUG --------------------------------------------------------------
 
     Serial.begin(115200);
-    delay(2000);
+    delay(500);
     Serial.println();
     Serial.println();
 
     // Init EEPROM32_Rotate ----------------------------------------------------
 
     // You can add partitions manually by name
-    uint8_t ret = EEPROMr.add_by_name("eeprom");
-    Serial.print("eeprom add result: ");
-    Serial.println(ret);
-    ret = EEPROMr.add_by_name("eeprom2");
-    Serial.print("eeprom2 add result: ");
-    Serial.println(ret);
+    // uint8_t ret = EEPROMr.add_by_name("eeprom1");
+    // ret = EEPROMr.add_by_name("eeprom2");
+    // ret = EEPROMr.add_by_name("eeprom3");
+    // ret = EEPROMr.add_by_name("eeprom4");
+    // ret = EEPROMr.add_by_name("eeprom5");
 
     // Or add them by subtype (it will search and add all partitions with that subtype)
-    //EEPROMr.add_by_subtype(0x99);
+    EEPROMr.add_by_subtype(0x99);
 
     // Offset where the magic bytes will be stored (last 16 bytes block)
     bool bret = EEPROMr.offset(0xFF0);
@@ -39,25 +38,34 @@ void setup() {
     EEPROMr.begin(4096);
 
     // -------------------------------------------------------------------------
-
+    // Serial.printf("[EEPROM] Current partition   : %s\n", EEPROMr.current());
+    // delay(1000);
+    // Serial.printf("[EEPROM] Dumping data for partition %s\n", "eeprom");
+    // EEPROMr.dump(Serial, 0);
+    // Serial.printf("[EEPROM] Dumping data for partition %s\n", "eeprom2");
+    // EEPROMr.dump(Serial, 1);
+    // return;
     uint8_t data;
 
-    Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
-    Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
-    Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
-    Serial.printf("Data      : 0x%02X\n", data = EEPROMr.read(0));
+    for(int i=0; i<7; i++){
+        Serial.println("********************");
+        Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
+        Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
+        Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
+        Serial.printf("Data      : 0x%02X\n", data = EEPROMr.read(0));
 
-    Serial.println();
-    Serial.printf("Writing 0x%02X to data\n", (data/2) + 1);
-    Serial.println();
+        Serial.println();
+        Serial.printf("Writing 0x%02X to data\n", (data) + 1);
+        Serial.println();
 
-    EEPROMr.write(0, (data/2) + 1);
-    Serial.printf("Commit %s\n", EEPROMr.commit() ? "OK" : "KO");
+        EEPROMr.write(0, (data) + 1);
+        Serial.printf("Commit %s\n", EEPROMr.commit() ? "OK" : "KO");
 
-    Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
-    Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
-    Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
-    Serial.printf("Data      : 0x%02X\n", data = EEPROMr.read(0));
+        Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
+        Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
+        Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
+        Serial.printf("Data      : 0x%02X\n", data = EEPROMr.read(0));
+    }
 
     Serial.flush();
     // delay(1000);
@@ -74,6 +82,9 @@ void setup() {
     }
     Serial.println();
     Serial.printf("[EEPROM] Current partition   : %s\n", EEPROMr.current());
+
+    EEPROMr.begin(4096);
+
 }
 
 void loop() {}

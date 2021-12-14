@@ -216,9 +216,6 @@ void EEPROM32_Rotate::begin(size_t size) {
 
         // load the partition data
         _name = _partitions[index].name;
-
-        DEBUG_EEPROM32_ROTATE(">>>>> DEBUG-1 name %s  index %u \n", _name, index);
-
         EEPROMClass::begin(size);
 
         // get partition value
