@@ -46,8 +46,19 @@ void setup() {
     // EEPROMr.dump(Serial, 1);
     // return;
     uint8_t data;
+#define CYCLE       7
+#define COL_SIZE   3
+    uint8_t data_array[CYCLE][COL_SIZE] = {
+        {0x01, 0x02, 0x03},
+        {0x11, 0x12, 0x13},
+        {0x21, 0x22, 0x23},
+        {0x31, 0x32, 0x33},
+        {0x41, 0x42, 0x43},
+        {0x51, 0x52, 0x53},
+        {0x61, 0x62, 0x63},
+    };
 
-    for(int i=0; i<7; i++){
+    for(int i=0; i<CYCLE; i++){
         Serial.println("********************");
         Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
         Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
@@ -55,11 +66,12 @@ void setup() {
         Serial.printf("Data      : 0x%02X\n", data = EEPROMr.read(0));
 
         Serial.println();
-        Serial.printf("Writing 0x%02X to data\n", (data) + 1);
+//        Serial.printf("Writing 0x%02X to data\n", (data) + 1);
         Serial.println();
 
-        EEPROMr.write(0, (data) + 1);
-        Serial.printf("Commit %s\n", EEPROMr.commit() ? "OK" : "KO");
+        // EEPROMr.write(0, (data) + 1);
+        // Serial.printf("Commit %s\n", EEPROMr.commit() ? "OK" : "KO");
+        Serial.printf("Commit %s\n", EEPROMr.write_and_commit(data_array[i], COL_SIZE, 4096) ? "OK" : "KO");
 
         Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
         Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));

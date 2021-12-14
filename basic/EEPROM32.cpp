@@ -25,7 +25,7 @@
 */
 
 #include "Arduino.h"
-#include "EEPROM.h"
+#include "EEPROM32.h"
 
 #include <esp_log.h>
 

@@ -24,10 +24,10 @@ along with the EEPROM32_Rotate library.  If not, see <http://www.gnu.org/license
 #ifndef EEPROM32_ROTATE_H
 #define EEPROM32_ROTATE_H
 
-#include "EEPROM.h"
 #include <Stream.h>
 #include <vector>
 #include <esp_partition.h>
+#include "EEPROM32.h"
 
 #ifdef DEBUG_EEPROM32_ROTATE_PORT
 #define DEBUG_EEPROM32_ROTATE(...) DEBUG_EEPROM32_ROTATE_PORT.printf( __VA_ARGS__ )
@@ -59,6 +59,7 @@ class EEPROM32_Rotate: public EEPROMClass {
 
         void begin(size_t size);
         bool commit();
+        bool write_and_commit(uint8_t* data_array, uint32_t array_size, size_t part_size);
 
         const char * name(uint8_t index);
         const char * current();
