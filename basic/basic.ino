@@ -5,8 +5,38 @@
 #include "EEPROM32_Rotate.h"
 
 #define PARTITION_SIZE  4096
+#define SLOTN           4
+#define MAGICVALR       0x55332299
 
 EEPROM32_Rotate EEPROMr;
+
+typedef struct eeprom_data_str{
+//    const char* name[SLOTN] = {"counter_0", "counter_1", "counter_2", "counter_3"};
+    uint32_t value[SLOTN];
+    uint32_t timestamp;
+    uint32_t number;
+    uint32_t magic_val;
+    uint32_t spare;
+} datar_t;
+const datar_t datar_def = { {0,0,0,0}, 0,0, MAGICVALR, 0 };
+datar_t datar;
+uint8_t* p_datar = (uint8_t*) & datar;
+
+uint32_t eeprom32_get_counter(uint8_t ind, uint32_t defaultValue=0) {
+    uint32_t ret = defaultValue;
+    if(MAGICVALR != datar.magic_val){return ret;}
+    return datar.value[ind];
+}
+uint32_t eeprom32_get_timestamp(uint32_t defaultValue=0) {
+    uint32_t ret = defaultValue;
+    if(MAGICVALR != datar.magic_val){return ret;}
+    return datar.timestamp;
+}
+uint32_t eeprom32_get_number(uint32_t defaultValue=0) {
+    uint32_t ret = defaultValue;
+    if(MAGICVALR != datar.magic_val){return ret;}
+    return datar.number;
+}
 
 void rotate_test() {
     #define CYCLE       7
@@ -27,7 +57,7 @@ void rotate_test() {
         Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
         Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
         Serial.println();
-        Serial.printf("Commit %s\n", EEPROMr.write_and_commit(data_array[i], COL_SIZE, 4096) ? "OK" : "KO");
+        Serial.printf("Commit %s\n", EEPROMr.write_and_commit(data_array[i], COL_SIZE, PARTITION_SIZE) ? "OK" : "KO");
         Serial.printf("Position 0: 0x%02X\n", EEPROMr.read(0));
         Serial.printf("Position 1: 0x%02X\n", EEPROMr.read(1));
         Serial.printf("Position 2: 0x%02X\n", EEPROMr.read(2));
@@ -56,14 +86,52 @@ void rotate_setup() {
     // Look for the most recent valid data and populate the memory buffer
     EEPROMr.begin(PARTITION_SIZE);
     // -------------------------------------------------------------------------
+    uint32_t size =  EEPROMr.readBytes(0, &datar, sizeof(datar));
+    Serial.println("datar[] are:");
+    for(int i=0; i<sizeof(datar); i++){
+        Serial.printf(" 0x%02X ", p_datar[i]);
+    }
+    Serial.println(" ");
+    Serial.println("COUNTERs are:");
+    for(int i=0; i<SLOTN; i++) {
+        Serial.printf("COUNTER %u: 0x%08X\n", i, datar.value[i]);
+
+    }
+    if(MAGICVALR != datar.magic_val){
+        memcpy(p_datar, &datar_def, sizeof(datar));
+        Serial.println("Writ default to EEPROM");
+        datar.number = 0x55;
+        datar.value[0] = 0x300;
+        datar.value[1] = 0x301;
+        datar.value[2] = 0x302;
+        datar.value[3] = 0x303;
+    }
+    datar.number += 1;
+    datar.value[0] += 1;
+    datar.value[1] += 1;
+    datar.value[2] += 1;
+    datar.value[3] += 1;
+    Serial.printf("Commit %s\n", EEPROMr.write_and_commit(p_datar, 32, PARTITION_SIZE) ? "OK" : "KO");
+    delay(500);
+    Serial.printf("[EEPROM] Reserved partitions : %u\n", EEPROMr.size());
+    Serial.printf("[EEPROM] Partition size      : %u\n", EEPROMr.length());
+    Serial.printf("[EEPROM] Parititions in use  : ");
+    for (uint32_t i = 0; i < EEPROMr.size(); i++) {
+        if (i>0) Serial.print(", ");
+        Serial.print(EEPROMr.name(i));
+    }
+    Serial.println();
+    Serial.printf("[EEPROM] Current partition   : %s\n", EEPROMr.current());
+
 }
+
 void setup() {
 
     // Init DEBUG --------------------------------------------------------------
     Serial.begin(115200);
     delay(500);
     rotate_setup();
-    rotate_test();
+//    rotate_test();
 }
 
 void loop() {}
