@@ -218,6 +218,8 @@ void EEPROM32_Rotate::begin(size_t size) {
     uint8_t best_value = 0xFF;
     bool first = true;
 
+    _size4crc = size;
+
     for (uint32_t index = 0; index < _partitions.size(); index++) {
 
         // load the partition data
@@ -406,7 +408,9 @@ bool EEPROM32_Rotate::_exists(const char * name) {
  */
 uint16_t EEPROM32_Rotate::_calculate_crc() {
     uint16_t crc = 0;
-    for (uint16_t address = 0; address < _user_defined_size; address++) {
+//    for (uint16_t address = 0; address < _user_defined_size; address++) {
+    // Let squize array data for crc check 
+    for (uint16_t address = 0; address < _size4crc; address++) {
         if (_offset <= address && address <= _offset + 2) continue;
         crc = crc + read(address);
     }
@@ -425,5 +429,7 @@ bool EEPROM32_Rotate::_check_crc() {
         read(_offset + EEPROM32_ROTATE_CRC_OFFSET + 1);
     DEBUG_EEPROM32_ROTATE("Calculated CRC: 0x%04X\n", calculated);
     DEBUG_EEPROM32_ROTATE("Stored CRC    : 0x%04X\n", stored);
+    DEBUG_EEPROM32_ROTATE("_user_defined_size    : 0x%04X\n", _user_defined_size);
+    DEBUG_EEPROM32_ROTATE("_size4crc    : 0x%04X\n", _size4crc);
     return (calculated == stored);
 }

@@ -79,6 +79,7 @@ class EEPROM32_Rotate: public EEPROMClass {
         uint16_t _offset = 0;
         uint8_t _partition_index = 0;
         uint8_t _partition_value = 0;
+        uint32_t _size4crc = 0;
 
         bool _exists(const char * name);
         uint16_t _calculate_crc();
