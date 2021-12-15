@@ -416,7 +416,8 @@ uint16_t EEPROM32_Rotate::_calculate_crc() {
     //     if (_offset <= address && address <= _offset + 2) continue;
     //     crc = crc + read(address);
     // }
-    uint32_t size =  EEPROM32_Rotate::readBytes(0, &data, 32);
+    // Let calclulate CRC from zero to OFFSET byte. Last 16 byte with CRC and Magic Byte bypassed
+    uint32_t size =  EEPROM32_Rotate::readBytes(0, &data, _offset);
     crc = crcx::crc16(data, _size4crc);
     return crc;
 }
