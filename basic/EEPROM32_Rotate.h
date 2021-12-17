@@ -41,8 +41,10 @@ along with the EEPROM32_Rotate library.  If not, see <http://www.gnu.org/license
 #define DEBUG_EEPROM32_ROTATE(...)
 #endif
 
-#define EEPROM32_ROTATE_CRC_OFFSET        0   // 2 bytes long
-#define EEPROM32_ROTATE_COUNTER_OFFSET    2   // 1 byte long
+// <magic byte (counter offset)> <crc high byte> <crc low byte>
+#define EEPROM32_ROTATE_CRC_OFFSET        1 // was 0  // 2 bytes long
+#define EEPROM32_ROTATE_COUNTER_OFFSET    0 // was 2   // 1 byte long
+
 
 typedef struct {
     char * name;

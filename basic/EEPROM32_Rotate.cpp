@@ -417,8 +417,10 @@ uint16_t EEPROM32_Rotate::_calculate_crc() {
     //     crc = crc + read(address);
     // }
     // Let calclulate CRC from zero to OFFSET byte. Last 16 byte with CRC and Magic Byte bypassed
-    uint32_t size =  EEPROM32_Rotate::readBytes(0, &data, _offset);
-    crc = crcx::crc16(data, _size4crc);
+    // Let calclulate CRC from zero to OFFSET+1 byte. Last byte at [OFFSET+1] is Magic Byte. CRC bypassed
+    EEPROM32_Rotate::readBytes(0, &data, _offset+1);
+    // Let add magic byte to data
+    crc = crcx::crc16(data, _offset+1);
     return crc;
 }
 
